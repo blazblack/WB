@@ -18,7 +18,7 @@ def automatic(progname):
         
     prog_execution = "gcc " + progname + ".c " + "-Wall"
     #DBからプログラム名を引数に探し出す
-    check = subprocess.run((prog_execution), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    check = subprocess.run((prog_execution), shell=True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     print("実行名　　　" + check.args)
     print("実行判定　 " + str(check.returncode))# ここでの返り値は実行ファイルを問題なく実行できたかが返ってくる　成功は0 失敗は１である
     if (check.returncode != 0):
@@ -44,20 +44,22 @@ def execution(progname):
     
     for i in range(1, num_data + 1):
         with open (progname + "_case_" + str(i) +".txt",'r') as prog_case: #DB化不可能である
-            exe = subprocess.Popen('a.exe', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            exe = subprocess.Popen('./a.out', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+
             try:
                 outs, errs = exe.communicate(timeout=1)
                 
             except subprocess.TimeoutExpired:
                 call_return = 1
                 #exeid = exe.pid
-                subprocess.call("taskkill /im a.exe /f")
+                subprocess.call("taskkill /im a.exe /f", shell=True)
                 outs, errs = exe.communicate()
                 
         if call_return == 1:
             return 4
             
-        stdout_data, stderr_data = exe.communicate()
+        stdout_data = exe.communicate()[0]
+        stderr_data = exe.communicate()[1]
         str_case = stdout_data.decode(sys.stdin.encoding)
     
         with open (progname + "_answer_"+ str(i) +".txt",'r') as prog_answer: #DB化可能である

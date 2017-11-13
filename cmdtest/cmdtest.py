@@ -52,7 +52,11 @@ def execution(progname):
             except subprocess.TimeoutExpired:
                 call_return = 1
                 #exeid = exe.pid
+<<<<<<< HEAD
                 subprocess.call("taskkill /im a.exe /f", shell=True)
+=======
+                subprocess.call("pkill -KILL -f a.exe")
+>>>>>>> 7ef3138d989c8170898e5beb4e67d65d1b75c755
                 outs, errs = exe.communicate()
                 
         if call_return == 1:

@@ -5,16 +5,16 @@ Created on Mon Oct 30 15:16:20 2017
 """
 
 import subprocess
-import sys
-import os.path
+import sys 
+from os import path
 import time
 import concurrent.futures
 
 def automatic(progname):
     
     #問題番号が存在するかの確認
-    if os.path.exists(progname + "_data.txt") == False:
-        return 1
+  #  if path.exists(progname + "_data.txt") == False:
+  #      return 1
         
     prog_execution = "gcc " + progname + ".c " + "-Wall"
     #DBからプログラム名を引数に探し出す
@@ -43,11 +43,11 @@ def execution(progname):
         num_data = int(prog_data.read())
     
     for i in range(1, num_data + 1):
-        with open (progname + "_case_" + str(i) +".txt",'r') as prog_case: #DB化不可能である
+        with open (progname + "_case_" + str(i) +".txt",'r',encoding = 'cp932') as prog_case: #DB化不可能である
             exe = subprocess.Popen('./a.out', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
             try:
-                outs, errs = exe.communicate(timeout=1)
+                stdout_data, stderr_data = exe.communicate(timeout=1)
                 
             except subprocess.TimeoutExpired:
                 call_return = 1
@@ -58,13 +58,15 @@ def execution(progname):
         if call_return == 1:
             return 4
             
-        stdout_data = exe.communicate()[0]
-        stderr_data = exe.communicate()[1]
-        str_case = stdout_data.decode(sys.stdin.encoding)
+        #stdout_data = exe.communicate()[0]
+        #stderr_data = exe.communicate()[1]
+        str_case = stdout_data.decode('cp932')
     
-        with open (progname + "_answer_"+ str(i) +".txt",'r') as prog_answer: #DB化可能である
-            str_answer = prog_answer.read()
-                
+        with open (progname + "_answer_"+ str(i) +".txt",'r',encoding = 'cp932') as prog_answer: #DB化可能である
+            str_answer = prog_answer.readline()
+            print(prog_answer.readline())
+
+
         #現状は疑似的にファイル操作を行ってデータを取り出しているが、DB上ｆではデータを探し出して当てはめることでできる
         #prog_caseにデータを入れる際はデータ形式に気をつける
         #多分だけど、ダイレクトじゃないとテストケースを実行ファイルに読み込めないっぽいので、テストケースはテキストファイルで保存する形になると思います。

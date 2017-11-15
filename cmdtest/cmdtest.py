@@ -58,8 +58,6 @@ def execution(progname):
         if call_return == 1:
             return 4
             
-        #stdout_data = exe.communicate()[0]
-        #stderr_data = exe.communicate()[1]
         str_case = stdout_data.decode('cp932')
     
         with open (progname + "_answer_"+ str(i) +".txt",'r',encoding = 'cp932') as prog_answer: #DB化可能である

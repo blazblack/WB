@@ -54,7 +54,7 @@ def execution(progname):
             except subprocess.TimeoutExpired:
                 call_return = 1
                 #exeid = exe.pid
-                subprocess.call("taskkill /im a.exe /f", shell=True)
+                subprocess.call("killall a.out", shell=True)
                 outs, errs = exe.communicate()
                 
         if call_return == 1:
@@ -101,6 +101,7 @@ def init():
         if progname == "end":
             break
         result_code = automatic(progname)
+        break
         if result_code == 1:
             print("その問題は存在しません")
         elif result_code == 2:
@@ -112,6 +113,41 @@ def init():
         else:
             return(0)
     
+@app.route("/prog0105")   
+def prog0105():
+    while (True):#デーモン化した場合の動きは想定していない
+        #progname = input(">>")
+        progname = "prog0105"
+        if progname == "end":
+            break
+        result_code = automatic(progname)
+        break
+        if result_code == 1:
+            print("その問題は存在しません")
+        elif result_code == 2:
+            print("コンパイルエラー")
+        elif result_code == 3:
+            print("ランタイムエラー")
+        elif result_code == 4:
+            print("時間足りません")
+        else:
+                break
+
             
+@app.route("/prog0106")   
+def prog0106():
+    while (True):#デーモン化した場合の動きは想定していない
+        #progname = input(">>")
+        progname = "prog0106"
+        if progname == "end":
+            break
+        result_code = automatic(progname)
+        break
+        if result_code == 1:
+            print("その問題は存在しません")
+        elif result_code == 2:
+            print("コンパイルエラー")
+
+
 if __name__ == '__main__':
     app.run()

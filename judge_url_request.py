@@ -9,7 +9,13 @@ import sys
 from os import path
 import time
 import concurrent.futures
-from flask import Flask
+from flask import Flask, request, redirect, flash
+from werkzeug import secure_filename
+import cgi
+
+UPLOAD_FOlDER = 'cmdtest/'
+ALLOWED_EXTENSIONS = set(['c'])
+
 app = Flask(__name__)
 
 def automatic(progname):
@@ -101,6 +107,7 @@ def init():
         if progname == "end":
             break
         result_code = automatic(progname)
+        return redirect("static/html/comp0101.html")
         break
         if result_code == 1:
             print("その問題は存在しません")
@@ -149,5 +156,15 @@ def prog0106():
             print("コンパイルエラー")
 
 
+@app.route("/file_upload", methods=['POST'])
+def upload_file():
+    if request.method == "POST":
+            f = request.files["prog0101"]
+            print("ok")
+            f.save(secure_filename(f.filename))
+            init()
+            return redirect('html/comp0101.html')
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

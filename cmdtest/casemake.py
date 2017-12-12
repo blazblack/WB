@@ -21,7 +21,7 @@ def automatic(progname):
     check = subprocess.run((prog_execution), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     print("実行名　　　" + check.args)
     print("実行判定　 " + str(check.returncode))# ここでの返り値は実行ファイルを問題なく実行できたかが返ってくる　成功は0 失敗は１である
-    if check.returncode != 0:
+    if (check.returncode != 0):
         print("コンパイルエラー\n" + check.stderr.decode('utf-8'))# ここに実行時問題が発生した場合、エラー文が書き込まれる
         return 2
     
@@ -40,42 +40,31 @@ def execution(progname):
     
     with open(progname + "_data.txt",'r') as prog_data:
         num_data = int(prog_data.read())
-            
+    
+    
     for i in range(1, num_data + 1):
         with open (progname + "_case_" + str(i) +".txt",'r') as prog_case: #DB化不可能である
             exe = subprocess.Popen('a.exe', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             try:
                 outs, errs = exe.communicate(timeout=1)
-                    
+                
             except subprocess.TimeoutExpired:
                 #exeid = exe.pid
-                #subprocess.call("taskkill /im a.exe /f")
-                subprocess.call("pkill -KILL -f a.exe")
+                subprocess.call("taskkill /im a.exe /f")
                 outs, errs = exe.communicate()
                 return 4
             
         stdout_data, stderr_data = exe.communicate()
         str_case = stdout_data.decode(sys.stdin.encoding)
-        
-        str_case = str_case.replace('\n','')
-        str_case = str_case.replace('\r','')
             
-        with open (progname + "_answer_"+ str(i) +".txt",'r') as prog_answer: #DB化可能である
-            str_answer = prog_answer.read()
-            str_answer = str_answer.replace('\n','')
-            str_answer = str_answer.replace('\r','')
-                
-                    
         print("実行名　　　" + exe.args)       #実行ソースタイトル
-        print("テキスト回答" +str_answer)     #テキストの回答
         print("実行回答　 " + str_case)       #実行exeのprintf 
         print("mian返り値 " + str(exe.returncode)) #ソースの名関数返り値
+        with open (progname + "_answer_"+ str(i) +".txt",'w') as case_answer:
+            case_answer.write(str_case)
+        
         print("実行時警告" + stderr_data.decode('utf-8'))     #標準入出力先へのパイプ指定
-                
-        if str_answer == str_case:
-            print("正解")
-        else:
-            print("不正解")
+            
             
     return 0
     
@@ -83,8 +72,6 @@ def execution(progname):
     
 def time_limit():
     time.sleep(0.1)
-    
-    
     
     
 def main():

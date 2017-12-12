@@ -9,6 +9,14 @@ import sys
 from os import path
 import time
 import concurrent.futures
+from flask import Flask, request, redirect, flash
+from werkzeug import secure_filename
+import cgi
+
+UPLOAD_FOlDER = 'cmdtest/'
+ALLOWED_EXTENSIONS = set(['c'])
+
+app = Flask(__name__)
 
 def automatic(progname):
     
@@ -52,16 +60,14 @@ def execution(progname):
             except subprocess.TimeoutExpired:
                 call_return = 1
                 #exeid = exe.pid
-<<<<<<< HEAD
-                subprocess.call("taskkill /im a.exe /f", shell=True)
-=======
-                subprocess.call("pkill -KILL -f a.exe")
->>>>>>> 7ef3138d989c8170898e5beb4e67d65d1b75c755
+                subprocess.call("killall a.out", shell=True)
                 outs, errs = exe.communicate()
                 
         if call_return == 1:
             return 4
             
+        #stdout_data = exe.communicate()[0]
+        #stderr_data = exe.communicate()[1]
         str_case = stdout_data.decode('cp932')
     
         with open (progname + "_answer_"+ str(i) +".txt",'r',encoding = 'cp932') as prog_answer: #DB化可能である
@@ -93,13 +99,16 @@ def time_limit():
     
     
     
-    
-def main():
+@app.route("/")   
+def init():
     while (True):#デーモン化した場合の動きは想定していない
-        progname = input(">>")
+        #progname = input(">>")
+        progname = "prog0101"
         if progname == "end":
             break
         result_code = automatic(progname)
+        return redirect("static/html/comp0101.html")
+        break
         if result_code == 1:
             print("その問題は存在しません")
         elif result_code == 2:
@@ -108,7 +117,54 @@ def main():
             print("ランタイムエラー")
         elif result_code == 4:
             print("時間足りません")
+        else:
+            return(0)
     
+@app.route("/prog0105")   
+def prog0105():
+    while (True):#デーモン化した場合の動きは想定していない
+        #progname = input(">>")
+        progname = "prog0105"
+        if progname == "end":
+            break
+        result_code = automatic(progname)
+        break
+        if result_code == 1:
+            print("その問題は存在しません")
+        elif result_code == 2:
+            print("コンパイルエラー")
+        elif result_code == 3:
+            print("ランタイムエラー")
+        elif result_code == 4:
+            print("時間足りません")
+        else:
+                break
+
             
+@app.route("/prog0106")   
+def prog0106():
+    while (True):#デーモン化した場合の動きは想定していない
+        #progname = input(">>")
+        progname = "prog0106"
+        if progname == "end":
+            break
+        result_code = automatic(progname)
+        break
+        if result_code == 1:
+            print("その問題は存在しません")
+        elif result_code == 2:
+            print("コンパイルエラー")
+
+
+@app.route("/file_upload", methods=['POST'])
+def upload_file():
+    if request.method == "POST":
+            f = request.files["prog0101"]
+            print("ok")
+            f.save(secure_filename(f.filename))
+            init()
+            return redirect('html/comp0101.html')
+
+
 if __name__ == '__main__':
-    main()
+    app.run(debug=True)

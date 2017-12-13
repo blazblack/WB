@@ -18,7 +18,7 @@ def automatic(progname):
         
     prog_execution = "gcc " + progname + ".c " + "-Wall"
     #DBからプログラム名を引数に探し出す
-    check = subprocess.run((prog_execution), stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    check = subprocess.run((prog_execution), shell=True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     print("実行名　　　" + check.args)
     print("実行判定　 " + str(check.returncode))# ここでの返り値は実行ファイルを問題なく実行できたかが返ってくる　成功は0 失敗は１である
     if (check.returncode != 0):
@@ -43,19 +43,19 @@ def execution(progname):
     
     
     for i in range(1, num_data + 1):
-        with open (progname + "_case_" + str(i) +".txt",'r') as prog_case: #DB化不可能である
-            exe = subprocess.Popen('a.exe', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        with open (progname + "_case_" + str(i) +".txt",'r',encoding = 'cp932') as prog_case: #DB化不可能である
+            exe = subprocess.Popen('./a.out', shell = True, stdin = prog_case, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            
             try:
                 outs, errs = exe.communicate(timeout=1)
                 
             except subprocess.TimeoutExpired:
                 #exeid = exe.pid
-                subprocess.call("taskkill /im a.exe /f")
+                subprocess.call("killall a.out" ,shell=True)
                 outs, errs = exe.communicate()
                 return 4
             
-        stdout_data, stderr_data = exe.communicate()
-        str_case = stdout_data.decode(sys.stdin.encoding)
+        str_case = outs.decode('cp932')
             
         print("実行名　　　" + exe.args)       #実行ソースタイトル
         print("実行回答　 " + str_case)       #実行exeのprintf 
@@ -63,7 +63,7 @@ def execution(progname):
         with open (progname + "_answer_"+ str(i) +".txt",'w') as case_answer:
             case_answer.write(str_case)
         
-        print("実行時警告" + stderr_data.decode('utf-8'))     #標準入出力先へのパイプ指定
+        print("実行時警告" + errs.decode('utf-8'))     #標準入出力先へのパイプ指定
             
             
     return 0

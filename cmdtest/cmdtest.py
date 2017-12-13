@@ -52,22 +52,20 @@ def execution(progname):
             except subprocess.TimeoutExpired:
                 call_return = 1
                 #exeid = exe.pid
-<<<<<<< HEAD
-                subprocess.call("taskkill /im a.exe /f", shell=True)
-=======
-                subprocess.call("pkill -KILL -f a.exe")
->>>>>>> 7ef3138d989c8170898e5beb4e67d65d1b75c755
+                subprocess.call("killall a.out", shell=True)
                 outs, errs = exe.communicate()
-                
-        if call_return == 1:
-            return 4
+                return 4
             
+        #stdout_data, stderr_data = exe.communicate()
         str_case = stdout_data.decode('cp932')
+
+        str_case = str_case.replace('\n','')
+        str_case = str_case.replace('\r','')
     
         with open (progname + "_answer_"+ str(i) +".txt",'r',encoding = 'cp932') as prog_answer: #DB化可能である
-            str_answer = prog_answer.readline()
-            print(prog_answer.readline())
-
+            str_answer = prog_answer.read()
+            str_answer = str_answer.replace('\n','')
+            str_answer = str_answer.replace('\r','')
 
         #現状は疑似的にファイル操作を行ってデータを取り出しているが、DB上ｆではデータを探し出して当てはめることでできる
         #prog_caseにデータを入れる際はデータ形式に気をつける
